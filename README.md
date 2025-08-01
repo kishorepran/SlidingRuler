@@ -139,6 +139,10 @@ By default it is `-V.infinity...V.infinity`.  Meaning that the sliding ruler is 
 The stride of the SlidingRuler.  
 By default it is `1.0`.
 
+#### `divisions` : *`Int`*
+The number of divisions per unit. Must be at least 1.  
+By default it is `10`. This controls how many subdivision marks appear between whole units.
+
 #### `snap` : *`Mark`*
 Possible values : `.none`, `.unit`, `.half`, `.fraction`.
 Describes the ruler's marks stickyness: when the ruler stops and the cursor is near a graduation it will snap to it.
@@ -151,7 +155,7 @@ Describes the ruler's marks stickyness: when the ruler stops and the cursor is n
 By default it is `.none`.
 
 Note: to trigger a snap the cursor must be _near_ the graduation. Here _near_ means that the delta between the cursor and the graduation is strictly less than a fraction of the ruler unit. 
-The value of a fraction is driven by the style's `fractions` property. The default styles have a `fractions` property equal to `10` so a fraction equals to `1/10` of a unit or `0.1` with the default `step` (`1.0`). 
+The value of a fraction is driven by the `divisions` parameter. By default it is `10` so a fraction equals to `1/10` of a unit or `0.1` with the default `step` (`1.0`). 
 
 #### `tick` : *`Mark`*
 Possible values : `.none`, `.unit`, `.half`, `.fraction`.
@@ -196,7 +200,7 @@ By default `SlindingRuler` ships with four styles. Two of them don't show any ma
 <img src="https://raw.githubusercontent.com/Pyroh/SlidingRuler/main/Resources/Styles/BlankCentered.png" width="374pt">
 
 
-### Example
+### Examples
 #### Percentage value
 A SlindingRuler that goes from 0 to 100%, that snaps and gives haptic feedback on any graduation.
 
@@ -220,6 +224,54 @@ struct PercentSlidingRuler: View {
                      snap: .fraction,
                      tick: .fraction,
                      formatter: formatter)
+    }
+}
+
+#### Feet and Inches
+A SlidingRuler configured for feet and inches with 12 divisions per foot:
+
+```Swift
+struct FeetInchesSlidingRuler: View {
+    @State private var value: Double = .zero
+    
+    private var formatter: NumberFormatter {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.maximumFractionDigits = 1
+        return f
+    }
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("Current Value: \(feetInchesString)")
+                .font(.headline)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(8)
+            
+            SlidingRuler(value: $value,
+                         in: 0...10,
+                         step: 1.0,
+                         divisions: 12,  // 12 inches per foot
+                         snap: .fraction,
+                         tick: .fraction,
+                         formatter: formatter)
+        }
+        .padding()
+    }
+    
+    private var feetInchesString: String {
+        let totalInches = value * 12 // Convert feet to total inches
+        let feet = Int(totalInches / 12)
+        let inches = Int(totalInches.truncatingRemainder(dividingBy: 12))
+        
+        if feet == 0 {
+            return "\(inches) inches"
+        } else if inches == 0 {
+            return "\(feet) ft"
+        } else {
+            return "\(feet) ft \(inches) inches"
+        }
     }
 }
 ```

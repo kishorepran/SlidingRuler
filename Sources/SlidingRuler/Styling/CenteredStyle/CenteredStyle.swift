@@ -37,6 +37,7 @@ public struct CenteredSlindingRulerStyle: SlidingRulerStyle {
                          bounds: configuration.bounds,
                          step: configuration.step,
                          cellWidth: cellWidth,
+                         divisions: configuration.divisions,
                          numberFormatter: configuration.formatter)
     }
 

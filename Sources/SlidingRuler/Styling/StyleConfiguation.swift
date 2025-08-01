@@ -34,5 +34,6 @@ public struct SlidingRulerStyleConfiguation {
     let mark: CGFloat
     let bounds: ClosedRange<CGFloat>
     let step: CGFloat
+    let divisions: Int
     let formatter: NumberFormatter?
 }

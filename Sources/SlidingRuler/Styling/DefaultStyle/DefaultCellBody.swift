@@ -34,8 +34,9 @@ struct BlankCellBody: NativeRulerCellView {
     var bounds: ClosedRange<CGFloat>
     var step: CGFloat
     var cellWidth: CGFloat
+    var divisions: Int
 
-    var scale: some ScaleView { DefaultScaleView(width: cellWidth) }
+    var scale: some ScaleView { DefaultScaleView(width: cellWidth, divisions: divisions) }
 }
 
 struct DefaultCellBody: NativeMarkedRulerCellView {
@@ -43,8 +44,9 @@ struct DefaultCellBody: NativeMarkedRulerCellView {
     var bounds: ClosedRange<CGFloat>
     var step: CGFloat
     var cellWidth: CGFloat
+    var divisions: Int
     var numberFormatter: NumberFormatter?
 
-    var cell: some RulerCellView { BlankCellBody(mark: mark, bounds: bounds, step: step, cellWidth: cellWidth) }
+    var cell: some RulerCellView { BlankCellBody(mark: mark, bounds: bounds, step: step, cellWidth: cellWidth, divisions: divisions) }
 }
 
