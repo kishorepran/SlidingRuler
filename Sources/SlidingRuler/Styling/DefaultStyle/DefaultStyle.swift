@@ -37,6 +37,7 @@ public struct PrimarySlidingRulerStyle: SlidingRulerStyle {
                         bounds: configuration.bounds,
                         step: configuration.step,
                         cellWidth: cellWidth,
+                        divisions: configuration.divisions,
                         numberFormatter: configuration.formatter)
     }
     
@@ -52,9 +53,9 @@ struct DefaultStyle_Previews: PreviewProvider {
 
         var body: some View {
             HStack(spacing: 0) {
-                BlankCellBody(mark: -1, bounds: range, step: 1, cellWidth: width).clipped()
-                BlankCellBody(mark: 0, bounds: range, step: 1, cellWidth: width).clipped()
-                BlankCellBody(mark: 1, bounds: range, step: 1, cellWidth: width).clipped()
+                BlankCellBody(mark: -1, bounds: range, step: 1, cellWidth: width, divisions: 10).clipped()
+                BlankCellBody(mark: 0, bounds: range, step: 1, cellWidth: width, divisions: 10).clipped()
+                BlankCellBody(mark: 1, bounds: range, step: 1, cellWidth: width, divisions: 10).clipped()
             }
         }
     }

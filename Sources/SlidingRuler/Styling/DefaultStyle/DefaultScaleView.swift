@@ -30,7 +30,11 @@
 import SwiftUI
 
 struct DefaultScaleView: ScaleView {
+    let divisions: Int
+    
     struct ScaleShape: Shape {
+        let divisions: Int
+        
         fileprivate var unitMarkSize: CGSize { .init(width: 3.0, height: 27.0)}
         fileprivate var halfMarkSize: CGSize { .init(width: UIScreen.main.scale == 3 ? 1.8 : 2.0, height: 19.0) }
         fileprivate var fractionMarkSize: CGSize { .init(width: 1.0, height: 11.0)}
@@ -43,10 +47,11 @@ struct DefaultScaleView: ScaleView {
             p.addRoundedRect(in: halfRect(x: 0), cornerSize: .init(square: halfMarkSize.width/2))
             p.addRoundedRect(in: halfRect(x: rect.maxX), cornerSize: .init(square: halfMarkSize.width/2))
             
-            let tenth = rect.width / 10
-            for i in 1...4 {
-                p.addRoundedRect(in: tenthRect(x: centerX + CGFloat(i) * tenth), cornerSize: .init(square: fractionMarkSize.width/2))
-                p.addRoundedRect(in: tenthRect(x: centerX - CGFloat(i) * tenth), cornerSize: .init(square: fractionMarkSize.width/2))
+            let divisionWidth = rect.width / CGFloat(divisions)
+            let divisionMarksCount = divisions - 1
+            for i in 1...divisionMarksCount {
+                p.addRoundedRect(in: divisionRect(x: centerX + CGFloat(i) * divisionWidth), cornerSize: .init(square: fractionMarkSize.width/2))
+                p.addRoundedRect(in: divisionRect(x: centerX - CGFloat(i) * divisionWidth), cornerSize: .init(square: fractionMarkSize.width/2))
             }
             
             return p
@@ -54,14 +59,14 @@ struct DefaultScaleView: ScaleView {
         
         private func unitRect(x: CGFloat) -> CGRect { rect(centerX: x, size: unitMarkSize) }
         private func halfRect(x: CGFloat) -> CGRect { rect(centerX: x, size: halfMarkSize) }
-        private func tenthRect(x: CGFloat) -> CGRect { rect(centerX: x, size: fractionMarkSize) }
+        private func divisionRect(x: CGFloat) -> CGRect { rect(centerX: x, size: fractionMarkSize) }
         
         private func rect(centerX x: CGFloat, size: CGSize) -> CGRect {
             CGRect(origin: .init(x: x - size.width / 2, y: 0), size: size)
         }
     }
 
-    var shape: ScaleShape { .init() }
+    var shape: ScaleShape { .init(divisions: divisions) }
     let width: CGFloat
     let height: CGFloat
 
@@ -69,9 +74,10 @@ struct DefaultScaleView: ScaleView {
     var halfMarkWidth: CGFloat { shape.halfMarkSize.width }
     var fractionMarkWidth: CGFloat { shape.fractionMarkSize.width }
 
-    init(width: CGFloat, height: CGFloat = 30) {
+    init(width: CGFloat, height: CGFloat = 30, divisions: Int = 10) {
         self.width = width
         self.height = height
+        self.divisions = divisions
     }
 }
 

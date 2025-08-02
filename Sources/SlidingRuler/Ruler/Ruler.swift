@@ -36,6 +36,7 @@ struct Ruler: View, Equatable {
     let step: CGFloat
     let markOffset: CGFloat
     let bounds: ClosedRange<CGFloat>
+    let divisions: Int
     let formatter: NumberFormatter?
     
     var body: some View {
@@ -48,7 +49,7 @@ struct Ruler: View, Equatable {
     }
     
     private func configuration(forCell cell: RulerCell) -> SlidingRulerStyleConfiguation {
-        return .init(mark: (cell.mark + markOffset) * step, bounds: bounds, step: step, formatter: formatter)
+        return .init(mark: (cell.mark + markOffset) * step, bounds: bounds, step: step, divisions: divisions, formatter: formatter)
     }
     
     static func ==(lhs: Self, rhs: Self) -> Bool {
@@ -61,6 +62,6 @@ struct Ruler: View, Equatable {
 struct Ruler_Previews: PreviewProvider {
     static var previews: some View {
         Ruler(cells: [.init(CGFloat(0))],
-              step: 1.0, markOffset: 0, bounds: -1...1, formatter: nil)
+              step: 1.0, markOffset: 0, bounds: -1...1, divisions: 10, formatter: nil)
     }
 }

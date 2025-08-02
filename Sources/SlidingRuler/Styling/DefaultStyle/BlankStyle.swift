@@ -36,7 +36,8 @@ public struct BlankSlidingRulerStyle: SlidingRulerStyle {
         BlankCellBody(mark: configuration.mark,
                       bounds: configuration.bounds,
                       step: configuration.step,
-                      cellWidth: cellWidth)
+                      cellWidth: cellWidth,
+                      divisions: configuration.divisions)
     }
 
     public func makeCursorBody() -> some View {

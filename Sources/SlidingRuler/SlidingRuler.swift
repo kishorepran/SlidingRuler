@@ -49,6 +49,8 @@ public struct SlidingRuler<V>: View where V: BinaryFloatingPoint, V.Stride: Bina
     private let bounds: ClosedRange<CGFloat>
     /// Value stride.
     private let step: CGFloat
+    /// Number of divisions per unit.
+    private let divisions: Int
     /// When to snap.
     private let snap: Mark
     /// When to tick.
@@ -119,6 +121,7 @@ public struct SlidingRuler<V>: View where V: BinaryFloatingPoint, V.Stride: Bina
     ///   - value: A binding connected to the control value.
     ///   - bounds: A closed range of possible values. Defaults to `-V.infinity...V.infinity`.
     ///   - step: The stride of the SlidingRuler. Defaults to `1`.
+    ///   - divisions: The number of divisions per unit. Must be at least 1. Defaults to `10`.
     ///   - snap: The ruler's marks stickyness. Defaults to `.none`
     ///   - tick: The graduation type that produce an haptic feedback when reached. Defaults to `.none`
     ///   - onEditingChanged: A closure executed when a drag session happens. It receives a boolean value set to `true` when the drag session starts and `false` when the value stops changing. Defaults to no action.
@@ -126,13 +129,20 @@ public struct SlidingRuler<V>: View where V: BinaryFloatingPoint, V.Stride: Bina
     public init(value: Binding<V>,
          in bounds: ClosedRange<V> = -V.infinity...V.infinity,
          step: V.Stride = 1,
+         divisions: Int = 10,
          snap: Mark = .none,
          tick: Mark = .none,
          onEditingChanged: @escaping (Bool) -> () = { _ in },
          formatter: NumberFormatter? = nil) {
+        // Validate divisions parameter
+        guard divisions >= 1 else {
+            fatalError("SlidingRuler divisions must be at least 1, got \(divisions)")
+        }
+        
         self._controlValue = value
         self.bounds = .init(uncheckedBounds: (CGFloat(bounds.lowerBound), CGFloat(bounds.upperBound)))
         self.step = CGFloat(step)
+        self.divisions = divisions
         self.snap = snap
         self.tick = tick
         self.editingChangedCallback = onEditingChanged
@@ -148,7 +158,7 @@ public struct SlidingRuler<V>: View where V: BinaryFloatingPoint, V.Stride: Bina
 
         return FlexibleWidthContainer {
             ZStack(alignment: .init(horizontal: .center, vertical: self.verticalCursorAlignment)) {
-                Ruler(cells: self.cells, step: self.step, markOffset: self.markOffset, bounds: self.bounds, formatter: self.formatter)
+                Ruler(cells: self.cells, step: self.step, markOffset: self.markOffset, bounds: self.bounds, divisions: self.divisions, formatter: self.formatter)
                     .equatable()
                     .animation(nil)
                     .modifier(InfiniteOffsetEffect(offset: renderedOffset, maxOffset: self.cellWidthOverflow))
@@ -317,7 +327,7 @@ extension SlidingRuler {
         guard nearest != value else { return }
 
         let delta = abs(nearest - value)
-        let fractionalValue = step / CGFloat(fractions)
+        let fractionalValue = step / CGFloat(divisions)
 
         guard delta < fractionalValue else { return }
 
@@ -337,7 +347,7 @@ extension SlidingRuler {
         switch snap {
         case .unit: t = step
         case .half: t = step / 2
-        case .fraction: t = step / CGFloat(fractions)
+        case .fraction: t = step / CGFloat(divisions)
         default: fatalError()
         }
 
@@ -525,7 +535,7 @@ extension SlidingRuler {
         switch tick {
         case .unit: t = cellWidth
         case .half: t = hasHalf ? cellWidth / 2 : cellWidth
-        case .fraction: t = cellWidth / CGFloat(fractions)
+        case .fraction: t = cellWidth / CGFloat(divisions)
         case .none: return
         }
         
@@ -541,4 +551,3 @@ extension SlidingRuler {
         fg.impactOccurred(intensity: 0.5)
     }
 }
-
