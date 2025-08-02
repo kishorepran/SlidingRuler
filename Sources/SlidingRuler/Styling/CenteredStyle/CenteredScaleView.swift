@@ -49,8 +49,8 @@ struct CenteredScaleView: ScaleView {
             p.addRoundedRect(in: halfRect(x: rect.maxX, y: centerY), cornerSize: .init(square: halfMarkSize.width/2))
 
             let divisionWidth = rect.width / CGFloat(divisions)
-            let maxDivisions = divisions - 1
-            for i in 1...maxDivisions {
+            let divisionMarksCount = divisions - 1
+            for i in 1...divisionMarksCount {
                 p.addRoundedRect(in: divisionRect(x: centerX + CGFloat(i) * divisionWidth, y: centerY), cornerSize: .init(square: fractionMarkSize.width/2))
                 p.addRoundedRect(in: divisionRect(x: centerX - CGFloat(i) * divisionWidth, y: centerY), cornerSize: .init(square: fractionMarkSize.width/2))
             }
